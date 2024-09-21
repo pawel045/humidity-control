@@ -5,7 +5,7 @@ from pymongo import MongoClient
 import streamlit as st
 import streamlit.components.v1 as components
 
-@st.cache_data
+
 def load_data():
     '''
     Get data from MongoDB
@@ -53,18 +53,28 @@ def set_widget_font_size(wgt_txt, wch_font_size = '12px'):
     htmlstr = htmlstr.replace('|wgt_txt|', "'" + wgt_txt + "'")
     components.html(f"{htmlstr}", height=0, width=0)
 
-
+# global var
 LABEL_FONT_SIZE = 20
+CHART_HEIGHT = 300
+TEMP_CHART_RANGE = (15, 30)
+HUM_CHART_RANGE = (30, 90)
+HOURS_FOR_AVG_VAL = 3 # avg hum/temp -> how many hours in past
+DIV_MARGIN = 6 # in px
+
+# get data from mongodb
 data = load_data()
 
-st.markdown("""
+# customize div margin
+margin_txt = """
     <style>
     /* Apply margin to all div elements (Streamlit components are often wrapped in divs) */
     div {
-        margin-bottom: 6px;
+        margin-bottom: """ + str(DIV_MARGIN) + 'px;' +  """
     }
     </style>
-    """, unsafe_allow_html=True)
+    """
+
+st.markdown(margin_txt, unsafe_allow_html=True)
 
 # title
 st.title('Check temperature and humidity')
@@ -75,7 +85,7 @@ if st.checkbox('Show raw data'):
     st.write(data)
 
 # avg value
-last_3h_data = filter_hours(data, 3)
+last_3h_data = filter_hours(data, HOURS_FOR_AVG_VAL)
 avg_temp = str(round(last_3h_data['temperature'].mean(), 2)) + ' °C'
 avg_hum = str(round(last_3h_data['humidity'].mean(), 2)) + ' %'
 
@@ -94,52 +104,30 @@ set_widget_font_size('How many hours back?', f'{LABEL_FONT_SIZE}px')
 
 # line chart
 filtered_data = filter_hours(data, hours)
-# col1, col2 = st.columns(2)
 
-# chart_temp = alt.Chart(filtered_data).mark_line().encode(
-#     x='timestamp:T',  # X-axis as timestamp
-#     y=alt.Y('temperature:Q', scale=alt.Scale(domain=[16, 28]))  # Y-axis with range 15-30
-# ).properties(
-#     title=alt.TitleParams(text="Temperature Over Time", fontSize=LABEL_FONT_SIZE),
-#     width='container',  # Responsive width
-#     # height=300
-# ).interactive()
-
-# chart_hum = alt.Chart(filtered_data).mark_line().encode(
-#     x='timestamp:T',  # X-axis as timestamp
-#     y=alt.Y('humidity:Q', scale=alt.Scale(domain=[30, 90]), axis=alt.Axis(orient='right'))  # Y-axis with range 15-30
-# ).properties(
-#     title=alt.TitleParams(text="Humidity Over Time", fontSize=LABEL_FONT_SIZE),
-#     width='container',  # Responsive width
-#     # height=300
-# ).interactive()
-
-# col1.altair_chart(chart_temp)
-# col2.altair_chart(chart_hum)
-
-chart1 = alt.Chart(filtered_data).mark_line().encode(
+chart_temp = alt.Chart(filtered_data).mark_line().encode(
     x='timestamp:T',
-    y=alt.Y('temperature:Q', scale=alt.Scale(domain=[15, 30]))
+    y=alt.Y('temperature:Q', scale=alt.Scale(domain=TEMP_CHART_RANGE))
 ).properties(
     title="Temperature Over Time",
     width='container',  # Responsive width
-    height=300
+    height=CHART_HEIGHT
 )
 
-chart2 = alt.Chart(filtered_data).mark_line(color='orange').encode(
+chart_hum = alt.Chart(filtered_data).mark_line(color='orange').encode(
     x='timestamp:T',
-    y=alt.Y('humidity:Q', scale=alt.Scale(domain=[30, 90]))
+    y=alt.Y('humidity:Q', scale=alt.Scale(domain=HUM_CHART_RANGE))
 ).properties(
     title="Humidity Over Time",
     width='container',  # Responsive width
-    height=300
+    height=CHART_HEIGHT
 )
 
 # Using columns to place charts side by side for larger screens
 cols = st.columns(2)
 
 with cols[0]:
-    st.altair_chart(chart1, use_container_width=True)  # Auto-resize chart to container width
+    st.altair_chart(chart_temp, use_container_width=True)  # Auto-resize chart to container width
 
 with cols[1]:
-    st.altair_chart(chart2, use_container_width=True)  # Auto-resize chart to container width
+    st.altair_chart(chart_hum, use_container_width=True) 
