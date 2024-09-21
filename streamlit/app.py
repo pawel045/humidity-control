@@ -94,21 +94,52 @@ set_widget_font_size('How many hours back?', f'{LABEL_FONT_SIZE}px')
 
 # line chart
 filtered_data = filter_hours(data, hours)
-col1, col2 = st.columns(2)
+# col1, col2 = st.columns(2)
 
-chart_temp = alt.Chart(filtered_data).mark_line().encode(
-    x='timestamp:T',  # X-axis as timestamp
-    y=alt.Y('temperature:Q', scale=alt.Scale(domain=[16, 28]))  # Y-axis with range 15-30
+# chart_temp = alt.Chart(filtered_data).mark_line().encode(
+#     x='timestamp:T',  # X-axis as timestamp
+#     y=alt.Y('temperature:Q', scale=alt.Scale(domain=[16, 28]))  # Y-axis with range 15-30
+# ).properties(
+#     title=alt.TitleParams(text="Temperature Over Time", fontSize=LABEL_FONT_SIZE),
+#     width='container',  # Responsive width
+#     # height=300
+# ).interactive()
+
+# chart_hum = alt.Chart(filtered_data).mark_line().encode(
+#     x='timestamp:T',  # X-axis as timestamp
+#     y=alt.Y('humidity:Q', scale=alt.Scale(domain=[30, 90]), axis=alt.Axis(orient='right'))  # Y-axis with range 15-30
+# ).properties(
+#     title=alt.TitleParams(text="Humidity Over Time", fontSize=LABEL_FONT_SIZE),
+#     width='container',  # Responsive width
+#     # height=300
+# ).interactive()
+
+# col1.altair_chart(chart_temp)
+# col2.altair_chart(chart_hum)
+
+chart1 = alt.Chart(filtered_data).mark_line().encode(
+    x='timestamp:T',
+    y=alt.Y('temperature:Q', scale=alt.Scale(domain=[15, 30]))
 ).properties(
-    title=alt.TitleParams(text="Temperature Over Time", fontSize=LABEL_FONT_SIZE)
-).interactive()
+    title="Temperature Over Time",
+    width='container',  # Responsive width
+    height=300
+)
 
-chart_hum = alt.Chart(filtered_data).mark_line().encode(
-    x='timestamp:T',  # X-axis as timestamp
-    y=alt.Y('humidity:Q', scale=alt.Scale(domain=[30, 90]), axis=alt.Axis(orient='right'))  # Y-axis with range 15-30
+chart2 = alt.Chart(filtered_data).mark_line(color='orange').encode(
+    x='timestamp:T',
+    y=alt.Y('humidity:Q', scale=alt.Scale(domain=[30, 90]))
 ).properties(
-    title=alt.TitleParams(text="Humidity Over Time", fontSize=LABEL_FONT_SIZE)
-).interactive()
+    title="Humidity Over Time",
+    width='container',  # Responsive width
+    height=300
+)
 
-col1.altair_chart(chart_temp)
-col2.altair_chart(chart_hum)
+# Using columns to place charts side by side for larger screens
+cols = st.columns(2)
+
+with cols[0]:
+    st.altair_chart(chart1, use_container_width=True)  # Auto-resize chart to container width
+
+with cols[1]:
+    st.altair_chart(chart2, use_container_width=True)  # Auto-resize chart to container width
