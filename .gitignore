@@ -1,0 +1,11 @@
+.gitignore
+basic_kafka_command.txt
+mongo_command.txt
+pipeline/custom_func/cred.py
+pipeline/custom_func/__pycache__
+info.txt
+venv
+.streamlit
+.pytest_cache
+logs
+__pycache__
