@@ -6,6 +6,8 @@ Apache Airflow orchestrates the data pipeline, automating the flow of data from 
 Designed for scalability and high reliability, this system is ideal for continuous monitoring and analysis of 
 environmental conditions in industrial settings.
 
+---
+
 ![Streamlit App](streamlit_app.png)
 
 
@@ -78,6 +80,8 @@ database = ""
 
 
 ## Folder Structure
+
+```python
 HumidityControl
 ├── node_mcu/                    # Contains Arduino code and connection schema
 ├── streamlit/app.py             # Streamlit web application
@@ -89,6 +93,7 @@ HumidityControl
 │   │   └── __init__.py          # Package initialization
 ├── requirements.txt             # Python dependencies
 └── README.md                    # Project documentation
+```
 
 
 ## Development direction
