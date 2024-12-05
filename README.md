@@ -100,7 +100,7 @@ HumidityControl
 
 1. **Prediction models** Building temperature and humidity models based on data from Postgres
 2. **Test** Finish writing unit tests for all functions
-3. **Predictions in Streamlit** Based on models creating section with prediction in close future
+3. **Predictions in Streamlit** Based on models creating section with prediction in future  (PySpark part in diagram)
 
 ## License
 
